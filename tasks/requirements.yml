@@ -11,6 +11,7 @@
   ansible.builtin.assert:
     that:
       - bastion_admin_ssh_pubkey is defined
+      - bastion_admin_ssh_pubkey != None
       - bastion_admin_ssh_pubkey | length > 0
     fail_msg: 'You must provide a valid SSH key.'
     success_msg: 'You provided a valid SSH key, continuing...'
