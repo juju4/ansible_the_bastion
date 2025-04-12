@@ -21,3 +21,8 @@
     path: "{{ bastion_flags_path }}"
     state: directory
     mode: '0700'
+
+- name: 'Requirements | Ensure pexpect is present'
+  ansible.builtin.package:
+    name: python3-pexpect
+    state: present
