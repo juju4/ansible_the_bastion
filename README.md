@@ -1,7 +1,9 @@
+[![Actions Status - Master](https://github.com/Lunik/ansible_the_bastion/workflows/AnsibleCI/badge.svg)](https://github.com/Lunik/ansible_the_bastion/actions?query=branch%3Amaster)
+
 OVH The Bastion
 =========
 
-Deploy OVH The Bastion on a server.
+Deploy [OVH The Bastion](https://github.com/ovh/the-bastion) on a server.
 
 Requirements
 ------------
