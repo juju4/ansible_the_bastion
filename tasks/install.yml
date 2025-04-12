@@ -73,8 +73,11 @@
   changed_when: "'ovh-ttyrec_version_changed' in _bastion_ovh_ttyrec_check.stdout"
 
 - name: 'Install | Initialize or upgrade the service'  # noqa no-changed-when
-  ansible.builtin.command: |
-    {{ bastion_path }}/bin/admin/install --managed-upgrade
+  ansible.builtin.expect:
+    command: |
+      {{ bastion_path }}/bin/admin/install --managed-upgrade
+    responses:
+      Please paste the SSH key you want to add: "{{ bastion_healthcheck_ssh_pubkey }}"
   register: _bastion_initialize
 
 - name: 'Install | Ensure install flag exists'
