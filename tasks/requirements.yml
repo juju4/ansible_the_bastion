@@ -19,4 +19,4 @@
   ansible.builtin.file:
     path: "{{ bastion_flags_path }}"
     state: directory
-    mode: 0700
+    mode: '0700'

@@ -6,4 +6,4 @@ bastion_version: v3.13.01
 
 bastion_hostname: bastion
 bastion_admin: admin
-bastion_admin_ssh_pubkey: 
+bastion_admin_ssh_pubkey:

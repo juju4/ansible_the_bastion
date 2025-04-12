@@ -4,14 +4,15 @@
   ansible.builtin.file:
     path: "{{ bastion_path }}"
     state: directory
-    mode: 0755
+    mode: '0755'
 
 - name: 'Install | Check if the service is already installed'
   ansible.builtin.stat:
     path: "{{ bastion_version_flag }}"
   register: _bastion_installed
 
-- when: _bastion_installed.stat.exists
+- name: Update
+  when: _bastion_installed.stat.exists
   block:
     - name: 'Install | Ensure the service is at the expected version'
       ansible.builtin.slurp:
@@ -19,22 +20,23 @@
       register: _bastion_version
 
     - name: 'Install | Compute the expected version'
-      set_fact:
+      ansible.builtin.set_fact:
         _bastion_up_to_date: "{{ (_bastion_version.content | b64decode | from_yaml).version == bastion_version }}"
   rescue:
     - name: 'Install | Check installed version failed'
-      debug:
+      ansible.builtin.debug:
         msg: 'Unable to properly check the service version, assuming it is not installed'
 
     - name: 'Install | Compute the expected version'
-      set_fact:
+      ansible.builtin.set_fact:
         _bastion_up_to_date: false
   always:
     - name: 'Install | Compute the expected default version'
-      set_fact:
+      ansible.builtin.set_fact:
         _bastion_up_to_date: "{{ _bastion_up_to_date | default(false) }}"
 
-- when: not (_bastion_installed.stat.exists and _bastion_up_to_date)
+- name: Install
+  when: not (_bastion_installed.stat.exists and _bastion_up_to_date)
   block:
     - name: 'Install | Download and unarchive the service'
       ansible.builtin.unarchive:
@@ -42,15 +44,15 @@
         remote_src: true
         dest: "{{ bastion_path }}"
         extra_opts:
-        - '--strip-components=1'
+          - '--strip-components=1'
 
     - name: 'Install | Ensure install flag exists'
       ansible.builtin.template:
         src: FLAG.j2
         dest: "{{ bastion_version_flag }}"
-        mode: 0600
+        mode: '0600'
 
-- name: 'Install | Ensure all depencies are installed'
+- name: 'Install | Ensure all dependencies are installed'
   ansible.builtin.command: |
     {{ bastion_path }}/bin/admin/packages-check.sh -i
   register: _bastion_packages_check
@@ -58,16 +60,19 @@
 
 - name: 'Install | Ensure ovh-ttyrec is installed'
   ansible.builtin.shell: |
+    set -o pipefail
     old=$(apt list --installed | grep ovh-ttyrec | awk '{ print $2 }')
     {{ bastion_path }}/bin/admin/install-ttyrec.sh -a
     new=$(apt list --installed | grep ovh-ttyrec | awk '{ print $2 }')
     if [ "$old" != "$new" ]; then
       echo "ovh-ttyrec_version_changed"
     fi
+  args:
+    executable: /bin/bash
   register: _bastion_ovh_ttyrec_check
   changed_when: "'ovh-ttyrec_version_changed' in _bastion_ovh_ttyrec_check.stdout"
 
-- name: 'Install | Initialize or upgrade the service'
+- name: 'Install | Initialize or upgrade the service'  # noqa no-changed-when
   ansible.builtin.command: |
     {{ bastion_path }}/bin/admin/install --managed-upgrade
   register: _bastion_initialize
@@ -76,4 +81,4 @@
   ansible.builtin.template:
     src: FLAG.j2
     dest: "{{ bastion_install_flag }}"
-    mode: 0600
+    mode: '0600'

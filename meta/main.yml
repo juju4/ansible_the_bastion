@@ -1,5 +1,6 @@
 galaxy_info:
-  author: Guillaume MARTINEZ <lunik@tiwabbit.fr>
+  # author: Guillaume MARTINEZ <lunik@tiwabbit.fr>
+  author: lunik
   description: Deploy and configure OVH The Bastion
   company: Tiwabbit.fr
 
