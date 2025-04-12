@@ -212,6 +212,6 @@ jobs:
       - name: help
         run: |
           set -x
-          /opt/bastion/bin/admin/install --help
+          sudo /opt/bastion/bin/admin/install --help
         if: ${{ always() }}
         continue-on-error: true
