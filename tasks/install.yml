@@ -38,10 +38,16 @@
 - name: Install
   when: not (_bastion_installed.stat.exists and _bastion_up_to_date)
   block:
+    - name: Import Github repo release download
+      ansible.builtin.import_tasks: github-repo-download.yml
+      vars:
+        gh_repo: "{{ bastion_repo }}"
+        gh_release: "{{ bastion_version }}"
+        gh_json_query: "assets[?ends_with(browser_download_url, '.tar.gz')].browser_download_url"
+
     - name: 'Install | Download and unarchive the service'
       ansible.builtin.unarchive:
-        src: "{{ bastion_url }}"
-        remote_src: true
+        src: "{{ bastion_path }}/{{ gh_dl_url | basename }}"
         dest: "{{ bastion_path }}"
         extra_opts:
           - '--strip-components=1'

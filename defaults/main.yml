@@ -2,6 +2,7 @@
 
 # Default version of The Bastion
 # CHANGELOG : https://github.com/ovh/the-bastion/releases/tag/v3.13.01
+bastion_repo: ovh/the-bastion
 bastion_version: v3.13.01
 
 bastion_hostname: bastion

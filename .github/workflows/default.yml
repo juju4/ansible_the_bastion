@@ -61,7 +61,7 @@ jobs:
         run: |
           set -x
           python -m pip install --upgrade pip
-          pip install molecule molecule-plugins docker ansible-lint flake8 testinfra ansible
+          pip install molecule molecule-plugins docker ansible-lint flake8 testinfra ansible jmespath
           mkdir -p $HOME/.ansible/roles && ln -s $GITHUB_WORKSPACE/$ANSIBLE_ROLE $HOME/.ansible/roles/ || true
           [ -f molecule/${SUITE}/requirements.yml ] && ansible-galaxy install -r molecule/${SUITE}/requirements.yml || true
       - name: Environment
