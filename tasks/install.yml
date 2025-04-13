@@ -43,11 +43,33 @@
       vars:
         gh_repo: "{{ bastion_repo }}"
         gh_release: "{{ bastion_version }}"
-        gh_json_query: "assets[?ends_with(browser_download_url, '.tar.gz')].browser_download_url"
+        gh_json_query: "tarball_url"
+      when:
+        - bastion_version == 'latest'
 
-    - name: 'Install | Download and unarchive the service'
+    - name: Download | Set fact - latest
+      ansible.builtin.set_fact:
+        bastion_archive_path: "{{ bastion_path }}/{{ gh_dl_url | basename }}"
+      when:
+        - bastion_version == 'latest'
+
+    - name: 'Install | Download the service'
+      ansible.builtin.get_url:
+        url: "{{ bastion_url }}"
+        dest: "{{ bastion_path }}/{{ bastion_url | basename }}"
+        mode: '0600'
+      when:
+        - bastion_version != 'latest'
+
+    - name: Download | Set fact - version
+      ansible.builtin.set_fact:
+        bastion_archive_path: "{{ bastion_path }}/{{ bastion_url | basename }}"
+      when:
+        - bastion_version != 'latest'
+
+    - name: 'Install | Unarchive the service'
       ansible.builtin.unarchive:
-        src: "{{ bastion_path }}/{{ gh_dl_url | basename }}"
+        src: "{{ bastion_archive_path }}"
         dest: "{{ bastion_path }}"
         extra_opts:
           - '--strip-components=1'
