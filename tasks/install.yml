@@ -52,6 +52,13 @@
         dest: "{{ bastion_version_flag }}"
         mode: '0600'
 
+- name: 'Install | Set perl PATH for ssh.inc'
+  ansible.builtin.lineinfile:
+    dest: "{{ bastion_path }}/lib/perl/OVH/Bastion/ssh.inc"
+    line: "$ENV{'PATH'}         = '/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/pkg/bin';"
+    insertafter: "^use Fcntl qw{ :mode :DEFAULT };"
+    mode: '0644'
+
 - name: 'Install | Ensure all dependencies are installed'
   ansible.builtin.command: |
     {{ bastion_path }}/bin/admin/packages-check.sh -i
